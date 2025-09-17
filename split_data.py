@@ -1,8 +1,6 @@
 import pandas as pd
 
-df = pd.read_csv("Sleep_dataset.csv")
-n = 4
-splits = np.array_split(df, n)
+data = pd.read_csv("owid-covid-data.csv")
 
-for i, split in enumerate(splits, 1):
-    split.to_csv(f"data_part{i}.csv", index=False)
+for continent, group in data.groupby(['Continent']):
+    group.to_csv(f"{continent}.csv", index=False)
