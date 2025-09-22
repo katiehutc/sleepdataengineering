@@ -2,7 +2,7 @@ import boto3
 import pandas as pd
 import pyarrow as pa
 import pyarrow.parquet as pq
-import io
+import io 
 
 def lambda_handler(event, context):
     s3 = boto3.client('s3')
