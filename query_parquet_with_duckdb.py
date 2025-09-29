@@ -1,6 +1,5 @@
 import duckdb
 import matplotlib.pyplot as plt
-import pandas as pd
 
 # connect to duckDB and load the parquet file
 conn = duckdb.connect()
@@ -71,9 +70,11 @@ for continent, df in top_countries.items():
     plt.show()
 
 #compare the case fatality rate (CFR)
-cfr_results = []
-for name, path in continents.items():
-    row = conn.execute(f"""
+continents_list = []
+cfr_values = []
+
+for continent, path in continents.items():
+    total_cases, total_deaths, cfr = conn.execute(f"""
         SELECT
             MAX(total_cases) AS total_cases,
             MAX(total_deaths) AS total_deaths,
@@ -81,15 +82,12 @@ for name, path in continents.items():
         FROM read_parquet('{path}')
     """).fetchone()
     
-    cfr_results.append((name,) + row)
-
-cfr_df = pd.DataFrame(cfr_results, columns=[
-    "Continent", "Total Cases", "Total Deaths", "CFR (%)"
-])
+    continents_list.append(continent)
+    cfr_values.append(cfr)
 
 #visualize
 plt.figure(figsize=(8,6))
-plt.bar(cfr_df["Continent"], cfr_df["CFR (%)"], color="orange")
+plt.bar(continents_list, cfr_values, color="orange")
 plt.title("COVID-19 Case Fatality Rate (CFR) by Continent")
 plt.ylabel("CFR (%)")
 plt.xlabel("Continent")
